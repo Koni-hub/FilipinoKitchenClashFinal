@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - LaurelLeaves
+  - Pork
+  - WashedPork
+  - WashedLaurelLeaves
+  - FirstChoppedOnion
+  - Onion
+  - OnionFirstCut
+  - OnionQuartered
+  - OnionWedges
+  - OnionMinced
+  - Labanos
+  - Okra
+  - Sitaw
+  - Talong
+  - PeeledGabi
+  - PorkKawaliCut
+  - PorkKawaliMinced
+  - LiverCubes
+  - LiverHalf
+  - LiverHalfSliced
+  - LiverInThree
+  - LiverHalfCubes
+  - Liver
+  - Tomato
+  - TomatoHalf
+  - TomatoWedges
+  - Garlic
+  - GarlicMinced
+  - LaurelLeavesCut
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
