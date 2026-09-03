@@ -61,6 +61,7 @@ public class CatchGameSetup : MonoBehaviour
     private GameObject startButtonObj;
     private TMP_Text startBtnText;
     private Dictionary<string, Image> dishButtons = new Dictionary<string, Image>();
+    private GameObject stopButtonObj;
 
     void Awake()
     {
@@ -111,6 +112,9 @@ public class CatchGameSetup : MonoBehaviour
 
         // Dish Buttons + Start Button in a row at top
         CreateDishButtons(canvasObj.transform);
+
+        // Stop Button next to "Go to prepping area" button (bottom-left)
+        CreateStopButton(canvasObj.transform);
 
         // Game Manager
         GameObject managerObj = new GameObject("CatchGameManager");
@@ -207,6 +211,45 @@ public class CatchGameSetup : MonoBehaviour
         startTxtRt.sizeDelta = Vector2.zero;
 
         startBtn.onClick.AddListener(OnStartButtonClicked);
+    }
+
+    private void CreateStopButton(Transform parent)
+    {
+        float stopBtnWidth = 150f;
+        float stopBtnHeight = 50f;
+
+        stopButtonObj = new GameObject("StopButton");
+        stopButtonObj.transform.SetParent(parent, false);
+        Image stopBg = stopButtonObj.AddComponent<Image>();
+        stopBg.color = new Color(0.8f, 0.2f, 0.2f, 1f);
+        Button stopBtn = stopButtonObj.AddComponent<Button>();
+        RectTransform stopRt = stopButtonObj.GetComponent<RectTransform>();
+        stopRt.anchorMin = new Vector2(0.5f, 0.5f);
+        stopRt.anchorMax = new Vector2(0.5f, 0.5f);
+        stopRt.anchoredPosition = new Vector2(-450f, -441f);
+        stopRt.sizeDelta = new Vector2(stopBtnWidth, stopBtnHeight);
+
+        GameObject stopTextObj = new GameObject("Text");
+        stopTextObj.transform.SetParent(stopButtonObj.transform, false);
+        TMP_Text stopTxt = stopTextObj.AddComponent<TextMeshProUGUI>();
+        stopTxt.text = "STOP";
+        stopTxt.fontSize = 28;
+        stopTxt.color = Color.white;
+        stopTxt.alignment = TextAlignmentOptions.Center;
+        RectTransform stopTxtRt = stopTextObj.GetComponent<RectTransform>();
+        stopTxtRt.anchorMin = Vector2.zero;
+        stopTxtRt.anchorMax = Vector2.one;
+        stopTxtRt.sizeDelta = Vector2.zero;
+
+        stopBtn.onClick.AddListener(OnStopButtonClicked);
+    }
+
+    private void OnStopButtonClicked()
+    {
+        if (gameManager != null)
+        {
+            gameManager.StopGame();
+        }
     }
 
     private void OnDishButtonClicked(string dishName)

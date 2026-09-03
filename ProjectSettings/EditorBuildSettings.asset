@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/UI/Canvases/UI_CharacterSelection.unity
     guid: 2f0800e14b559324cb6b873b7d42294b
   - enabled: 1
-    path: Assets/UI/Canvases/Mini Market.unity
+    path: Assets/UI/Canvases/UI_Mini_Market.unity
     guid: 581aa0287103eb840b21301e1789a92e
   - enabled: 1
     path: Assets/UI/Canvases/UI_PreppingArea.unity

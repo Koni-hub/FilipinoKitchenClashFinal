@@ -60,6 +60,18 @@ public class CatchGameManager : MonoBehaviour
         if (timerText != null) timerText.gameObject.SetActive(false);
     }
 
+    public void StopGame()
+    {
+        isPlaying = false;
+
+        if (spawner != null)
+            spawner.StopSpawning();
+
+        ClearIngredients();
+
+        Debug.Log("Game stopped! All ingredients cleared. Press START to play again.");
+    }
+
     void Update()
     {
         if (!isPlaying) return;
