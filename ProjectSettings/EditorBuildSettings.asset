@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/UI/Canvases/UI_PreppingArea.unity
     guid: 5abdf55e94e050c4a929d7fbf32a5f51
+  - enabled: 1
+    path: Assets/UI/Canvases/UI_Cooking_Area.unity
+    guid: 821d28133e42c214c8bfd08ee1896e08
+  - enabled: 1
+    path: Assets/UI/Canvases/UI_Rating.unity
+    guid: a0a6e423ffcdd3140bf6a26aee9c130f
   m_configObjects: {}
