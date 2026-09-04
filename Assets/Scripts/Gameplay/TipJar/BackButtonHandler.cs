@@ -7,6 +7,8 @@ public class BackButtonHandler : MonoBehaviour
 
     void OnMouseDown()
     {
+        PlayerPrefs.SetInt("GameRating", 0);
+        PlayerPrefs.Save();
         SceneManager.LoadScene(cookingAreaSceneName);
     }
 }
