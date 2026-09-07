@@ -17,8 +17,7 @@ public class DragSetupEditor : MonoBehaviour
             "pot with cover",
             "trash cab",
             "sisig plate",
-            "bowl sinigang",
-            "plates"
+            "bowl sinigang"
         };
 
         int count = 0;

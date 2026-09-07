@@ -46,7 +46,7 @@ public class SnapZone : MonoBehaviour
         ShowHighlight(false);
     }
 
-    private void ShowHighlight(bool show)
+    public void ShowHighlight(bool show)
     {
         if (highlightRenderer == null) return;
 

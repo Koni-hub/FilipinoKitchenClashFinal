@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DragSetup : MonoBehaviour
 {
@@ -26,7 +27,19 @@ public class DragSetup : MonoBehaviour
         }
 
         instance = this;
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
+        StartCoroutine(SetupDelayed());
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StopAllCoroutines();
         StartCoroutine(SetupDelayed());
     }
 
@@ -34,8 +47,13 @@ public class DragSetup : MonoBehaviour
     {
         yield return new WaitForSeconds(0.1f);
 
+        snapZones.Clear();
+        spriteCache.Clear();
+        PlateRespawner.ResetCounts();
+
         LoadSprites();
         SetupSnapZones();
+        HidePlates();
         SetupDraggableBoxes();
     }
 
@@ -53,6 +71,12 @@ public class DragSetup : MonoBehaviour
 
     private void SetupSnapZones()
     {
+        GameObject existingZones = GameObject.Find("SnapZones");
+        if (existingZones != null)
+        {
+            Destroy(existingZones);
+        }
+
         GameObject zonesParent = new GameObject("SnapZones");
 
         // Kitchen tool snap zones (individual positions)
@@ -92,8 +116,7 @@ public class DragSetup : MonoBehaviour
         }
     }
 
-    private void CreateSnapZone(GameObject parent, string name, Vector2 position, float radius)
-    {
+    private void CreateSnapZone(GameObject parent, string name, Vector2 position, float radius)    {
         GameObject zoneObj = new GameObject(name);
         zoneObj.transform.SetParent(parent.transform);
         zoneObj.transform.position = new Vector3(position.x, position.y, 0f);
@@ -114,6 +137,15 @@ public class DragSetup : MonoBehaviour
         sr.sortingOrder = -1;
 
         snapZones[name] = snapZone;
+    }
+
+    private void HidePlates()
+    {
+        GameObject platesObj = GameObject.Find("plates");
+        if (platesObj != null)
+        {
+            platesObj.SetActive(false);
+        }
     }
 
     private void SetupDraggableBoxes()
@@ -142,11 +174,11 @@ public class DragSetup : MonoBehaviour
         items.Add(new ItemData("pan", new string[] { "StoveSnapZone" }, 1.5f, 0.8f, false, ""));
         items.Add(new ItemData("pot with cover", new string[] { "PotSnapZone" }, 1.1f, 0.9f, false, ""));
 
-        // Sisig plate - snap to sisig zones
-        items.Add(new ItemData("sisig plate", new string[] { "SisigSnapZone1", "SisigSnapZone2", "SisigSnapZone3" }, 0.8f, 0.5f, false, ""));
+        // Sisig plate - snap to sisig zones (max 3)
+        items.Add(new ItemData("1 sisig plate", new string[] { "SisigSnapZone1", "SisigSnapZone2", "SisigSnapZone3" }, 0.8f, 0.5f, false, ""));
 
-        // Plates - swaps to pl adobo, snaps to all tray zones
-        items.Add(new ItemData("plates", trayZoneArray, 0.6f, 0.5f, true, "pl adobo"));
+        // Pl adobo - snaps to all tray zones
+        items.Add(new ItemData("pl adobo", trayZoneArray, 0.6f, 0.5f, false, ""));
 
         // All 8 bowl sinigang - swaps to white bowl, snaps to all tray zones
         items.Add(new ItemData("bowl sinigang", trayZoneArray, 0.5f, 0.8f, true, "white bowl"));
@@ -157,6 +189,12 @@ public class DragSetup : MonoBehaviour
         items.Add(new ItemData("bowl sinigang (5)", trayZoneArray, 0.5f, 0.8f, true, "white bowl"));
         items.Add(new ItemData("bowl sinigang (6)", trayZoneArray, 0.5f, 0.8f, true, "white bowl"));
         items.Add(new ItemData("bowl sinigang (7)", trayZoneArray, 0.5f, 0.8f, true, "white bowl"));
+
+        GameObject existingBoxes = GameObject.Find("DragBoxes");
+        if (existingBoxes != null)
+        {
+            Destroy(existingBoxes);
+        }
 
         GameObject boxesParent = new GameObject("DragBoxes");
 
@@ -198,6 +236,34 @@ public class DragSetup : MonoBehaviour
 
             original.transform.SetParent(box.transform);
             original.transform.localPosition = Vector3.zero;
+
+            if (item.itemName == "pl adobo")
+            {
+                box.SetActive(false);
+                GameObject prefab = Instantiate(box);
+                prefab.name = "PlAdobo_Prefab";
+                prefab.transform.SetParent(boxesParent.transform);
+                box.SetActive(true);
+
+                PlateRespawner respawner = box.AddComponent<PlateRespawner>();
+                respawner.spawnPosition = originalPos;
+                respawner.platePrefab = prefab;
+                respawner.maxPlates = 3;
+            }
+
+            if (item.itemName == "1 sisig plate")
+            {
+                box.SetActive(false);
+                GameObject prefab = Instantiate(box);
+                prefab.name = "SisigPlate_Prefab";
+                prefab.transform.SetParent(boxesParent.transform);
+                box.SetActive(true);
+
+                PlateRespawner respawner = box.AddComponent<PlateRespawner>();
+                respawner.spawnPosition = originalPos;
+                respawner.platePrefab = prefab;
+                respawner.maxPlates = 3;
+            }
         }
     }
 

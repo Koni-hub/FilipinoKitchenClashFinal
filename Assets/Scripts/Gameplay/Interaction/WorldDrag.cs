@@ -17,6 +17,9 @@ public class WorldDrag : MonoBehaviour
     [Header("Attach Settings")]
     public bool attachToParent = false;
 
+    public System.Action OnSnapped;
+    public System.Action OnReturned;
+
     private bool isDragging = false;
     private bool isSnapping = false;
     private Vector3 offset;
@@ -34,6 +37,10 @@ public class WorldDrag : MonoBehaviour
         originalPosition = transform.position;
 
         SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr == null)
+        {
+            sr = GetComponent<SpriteRenderer>();
+        }
         if (sr != null)
         {
             childSpriteRenderer = sr;
@@ -178,6 +185,11 @@ public class WorldDrag : MonoBehaviour
         }
 
         isSnapping = false;
+
+        if (OnSnapped != null)
+        {
+            OnSnapped.Invoke();
+        }
     }
 
     private void DetachFromParent()
@@ -210,6 +222,21 @@ public class WorldDrag : MonoBehaviour
 
         transform.position = targetPosition;
         isSnapping = false;
+
+        if (targetPosition == originalPosition)
+        {
+            if (OnReturned != null)
+            {
+                OnReturned.Invoke();
+            }
+        }
+        else
+        {
+            if (OnSnapped != null)
+            {
+                OnSnapped.Invoke();
+            }
+        }
     }
 
     private void ReturnToOriginal()
