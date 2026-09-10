@@ -50,6 +50,7 @@ public class WorldDrag : MonoBehaviour
 
     private void OnMouseDown()
     {
+        Debug.Log($"[WorldDrag] OnMouseDown on {gameObject.name} at pos={transform.position}, isSnapping={isSnapping}, isAttached={isAttached}, hasCollider={GetComponent<BoxCollider2D>() != null}, colliderEnabled={GetComponent<BoxCollider2D>()?.enabled}");
         if (isSnapping) return;
 
         if (isAttached)
@@ -207,20 +208,22 @@ public class WorldDrag : MonoBehaviour
     {
         isSnapping = true;
 
+        Vector3 finalPosition = new Vector3(targetPosition.x, targetPosition.y, -0.1f);
+
         while (Vector2.Distance(
             new Vector2(transform.position.x, transform.position.y),
-            new Vector2(targetPosition.x, targetPosition.y)
+            new Vector2(finalPosition.x, finalPosition.y)
         ) > 0.01f)
         {
             transform.position = Vector3.Lerp(
                 transform.position,
-                targetPosition,
+                finalPosition,
                 snapSpeed * Time.deltaTime
             );
             yield return null;
         }
 
-        transform.position = targetPosition;
+        transform.position = finalPosition;
         isSnapping = false;
 
         if (targetPosition == originalPosition)

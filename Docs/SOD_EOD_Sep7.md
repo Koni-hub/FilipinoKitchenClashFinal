@@ -20,6 +20,7 @@
 - HidePlates() — hides old plates object, replaced by pl adobo
 - Fixed duplicate component cleanup — removes WorldDrag if added by DragSetupEditor
 - ResetCounts() — resets plate counts on scene reload
+- Fixed compiler error (nearestZone.zoneName → nearestZone.gameObject.name)
 
 **Files Changed**
 - `DragSetup.cs` — plate respawner setup, scene load callback, hide plates
@@ -29,12 +30,15 @@
 - `SnapZone.cs` — ShowHighlight made public
 - `DragSetupEditor.cs` — removed plates from draggable list
 
-**Pushed to:** `dev` branch (commit: 78d4cee)
+**Pushed to:** `dev` branch (commit: 03640d6)
 
 ---
 
 **Ongoing Initiatives**
-- Test plate respawner in Unity
-- Implement remaining dish types
-- Customer order ticket system
-- Cooking mechanics per dish
+- Test plate respawner in Unity — pl adobo and sisig plate max 3 working
+- Implement remaining dish types (Adobo, Sinigang, Sisig, Balbacua, Bicol Express, Chicken Pochero, Dinuguan, Pinakbet)
+- Customer order ticket system — random dish per customer
+- Cooking mechanics per dish — drag ingredients to pot/pan
+- Kitchen tools attach to pot — renders on top
+- Sprite swap on drag — bowl sinigang → white bowl
+- PR feat/plate-system → dev
