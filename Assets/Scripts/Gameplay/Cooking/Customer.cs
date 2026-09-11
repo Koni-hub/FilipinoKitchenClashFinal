@@ -18,6 +18,10 @@ public class Customer : MonoBehaviour
     [Header("Patience Meter")]
     public SpriteRenderer meterRenderer;
     public Sprite[] meterStages;
+    public Vector2 meterOffset = new Vector2(1.17f, 1.61f);
+    public float meterBaseScale = 0.29f;
+    public Color meterColorFull = Color.green;
+    public Color meterColorLow = Color.red;
     private float patienceTime = 60f;
     private float patienceTimer;
     private bool isActive = false;
@@ -69,6 +73,15 @@ public class Customer : MonoBehaviour
         if (meterRenderer == null)
             meterRenderer = GetComponentInChildren<SpriteRenderer>();
 
+        if (meterRenderer != null)
+        {
+            meterRenderer.transform.position = transform.position + (Vector3)meterOffset;
+            meterRenderer.transform.localScale = new Vector3(meterBaseScale, meterBaseScale, 1f);
+
+            if (meterStages != null && meterStages.Length > 0)
+                meterRenderer.sprite = meterStages[0];
+        }
+
         isActive = true;
         isServed = false;
 
@@ -80,27 +93,12 @@ public class Customer : MonoBehaviour
     private void UpdateMeterDisplay()
     {
         if (meterRenderer == null) return;
-        if (meterStages == null || meterStages.Length == 0) return;
 
-        float timeRatio = patienceTimer / patienceTime;
+        float timeRatio = Mathf.Clamp01(patienceTimer / patienceTime);
 
-        int stageIndex;
-        if (timeRatio > 0.8f)
-            stageIndex = 0;
-        else if (timeRatio > 0.6f)
-            stageIndex = 1;
-        else if (timeRatio > 0.4f)
-            stageIndex = 2;
-        else if (timeRatio > 0.2f)
-            stageIndex = 3;
-        else if (timeRatio > 0.05f)
-            stageIndex = 4;
-        else
-            stageIndex = meterStages.Length - 1;
+        meterRenderer.transform.localScale = new Vector3(meterBaseScale * timeRatio, meterBaseScale, 1f);
 
-        stageIndex = Mathf.Clamp(stageIndex, 0, meterStages.Length - 1);
-
-        meterRenderer.sprite = meterStages[stageIndex];
+        meterRenderer.color = Color.Lerp(meterColorLow, meterColorFull, timeRatio);
     }
 
     public void ServeCustomer()
@@ -157,5 +155,11 @@ public class Customer : MonoBehaviour
         patienceTimer = patienceTime;
         gameObject.SetActive(false);
         transform.localScale = Vector3.one;
+
+        if (meterRenderer != null)
+        {
+            meterRenderer.transform.localScale = new Vector3(meterBaseScale, meterBaseScale, 1f);
+            meterRenderer.color = meterColorFull;
+        }
     }
 }
