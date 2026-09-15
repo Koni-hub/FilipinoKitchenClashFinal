@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class Customer : MonoBehaviour
 {
@@ -9,19 +8,15 @@ public class Customer : MonoBehaviour
     public int customerID;
     public string dishOrder;
     public Sprite customerSprite;
+    private bool orderTaken = false;
 
     [Header("References")]
     public SpriteRenderer spriteRenderer;
-    public GameObject orderBubble;
-    public TMP_Text orderText;
+    public CustomerPatienceMeter patienceMeter;
 
     [Header("Patience Meter")]
     public SpriteRenderer meterRenderer;
     public Sprite[] meterStages;
-    public Vector2 meterOffset = new Vector2(1.17f, 1.61f);
-    public float meterBaseScale = 0.29f;
-    public Color meterColorFull = Color.green;
-    public Color meterColorLow = Color.red;
     private float patienceTime = 60f;
     private float patienceTimer;
     private bool isActive = false;
@@ -29,6 +24,8 @@ public class Customer : MonoBehaviour
 
     public System.Action<Customer> OnCustomerLeft;
     public System.Action<Customer> OnCustomerServed;
+
+    private Vector3 originalScale;
 
     private void Update()
     {
@@ -44,11 +41,12 @@ public class Customer : MonoBehaviour
         }
     }
 
-    public void Setup(int id, Sprite sprite, string order, Vector3 position, Sprite[] meters, float patience = 60f)
+    public void Setup(int id, Sprite sprite, string order, Sprite dishSpriteParam, Vector3 position, Sprite[] meters, float patience = 60f)
     {
         customerID = id;
         customerSprite = sprite;
         dishOrder = order;
+        orderTaken = false;
 
         if (patience <= 0f)
             patience = 60f;
@@ -57,15 +55,10 @@ public class Customer : MonoBehaviour
         patienceTimer = patienceTime;
 
         transform.position = position;
+        originalScale = transform.localScale;
 
         if (spriteRenderer != null)
             spriteRenderer.sprite = customerSprite;
-
-        if (orderText != null)
-            orderText.text = dishOrder;
-
-        if (orderBubble != null)
-            orderBubble.SetActive(true);
 
         if (meters != null && meters.Length > 0)
             meterStages = meters;
@@ -73,13 +66,9 @@ public class Customer : MonoBehaviour
         if (meterRenderer == null)
             meterRenderer = GetComponentInChildren<SpriteRenderer>();
 
-        if (meterRenderer != null)
+        if (patienceMeter != null)
         {
-            meterRenderer.transform.position = transform.position + (Vector3)meterOffset;
-            meterRenderer.transform.localScale = new Vector3(meterBaseScale, meterBaseScale, 1f);
-
-            if (meterStages != null && meterStages.Length > 0)
-                meterRenderer.sprite = meterStages[0];
+            patienceMeter.Setup(this, dishOrder, dishSpriteParam);
         }
 
         isActive = true;
@@ -93,12 +82,27 @@ public class Customer : MonoBehaviour
     private void UpdateMeterDisplay()
     {
         if (meterRenderer == null) return;
+        if (meterStages == null || meterStages.Length == 0) return;
 
-        float timeRatio = Mathf.Clamp01(patienceTimer / patienceTime);
+        float timeRatio = patienceTimer / patienceTime;
 
-        meterRenderer.transform.localScale = new Vector3(meterBaseScale * timeRatio, meterBaseScale, 1f);
+        int stageIndex;
+        if (timeRatio > 0.8f)
+            stageIndex = 0;
+        else if (timeRatio > 0.6f)
+            stageIndex = 1;
+        else if (timeRatio > 0.4f)
+            stageIndex = 2;
+        else if (timeRatio > 0.2f)
+            stageIndex = 3;
+        else if (timeRatio > 0.05f)
+            stageIndex = 4;
+        else
+            stageIndex = meterStages.Length - 1;
 
-        meterRenderer.color = Color.Lerp(meterColorLow, meterColorFull, timeRatio);
+        stageIndex = Mathf.Clamp(stageIndex, 0, meterStages.Length - 1);
+
+        meterRenderer.sprite = meterStages[stageIndex];
     }
 
     public void ServeCustomer()
@@ -108,12 +112,21 @@ public class Customer : MonoBehaviour
         isServed = true;
         isActive = false;
 
-        if (orderBubble != null)
-            orderBubble.SetActive(false);
-
         OnCustomerServed?.Invoke(this);
 
         StartCoroutine(ExitAnimation());
+    }
+
+    public void OnOrderTaken()
+    {
+        orderTaken = true;
+
+        Debug.Log($"[Customer] Order '{dishOrder}' taken for customer {customerID}.");
+    }
+
+    public bool IsOrderTaken()
+    {
+        return orderTaken;
     }
 
     private void CustomerLeave()
@@ -121,9 +134,6 @@ public class Customer : MonoBehaviour
         if (isServed) return;
 
         isActive = false;
-
-        if (orderBubble != null)
-            orderBubble.SetActive(false);
 
         OnCustomerLeft?.Invoke(this);
 
@@ -144,7 +154,7 @@ public class Customer : MonoBehaviour
             yield return null;
         }
 
-        transform.localScale = Vector3.one;
+        transform.localScale = originalScale;
         gameObject.SetActive(false);
     }
 
@@ -152,14 +162,12 @@ public class Customer : MonoBehaviour
     {
         isActive = false;
         isServed = false;
+        orderTaken = false;
         patienceTimer = patienceTime;
         gameObject.SetActive(false);
-        transform.localScale = Vector3.one;
+        transform.localScale = originalScale;
 
-        if (meterRenderer != null)
-        {
-            meterRenderer.transform.localScale = new Vector3(meterBaseScale, meterBaseScale, 1f);
-            meterRenderer.color = meterColorFull;
-        }
+        if (patienceMeter != null)
+            patienceMeter.ResetMeter();
     }
 }
