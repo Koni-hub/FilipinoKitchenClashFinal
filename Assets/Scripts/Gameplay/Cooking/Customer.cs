@@ -21,6 +21,9 @@ public class Customer : MonoBehaviour
     private float patienceTimer;
     private bool isActive = false;
     private bool isServed = false;
+    private float gracePeriod = 5f;
+    private float graceTimer = 0f;
+    private bool inGracePeriod = false;
 
     public System.Action<Customer> OnCustomerLeft;
     public System.Action<Customer> OnCustomerServed;
@@ -33,12 +36,22 @@ public class Customer : MonoBehaviour
 
         patienceTimer -= Time.deltaTime;
 
-        UpdateMeterDisplay();
-
-        if (patienceTimer <= 0f)
+        if (patienceTimer <= 0f && !inGracePeriod)
         {
-            CustomerLeave();
+            inGracePeriod = true;
+            graceTimer = gracePeriod;
         }
+
+        if (inGracePeriod)
+        {
+            graceTimer -= Time.deltaTime;
+            if (graceTimer <= 0f)
+            {
+                CustomerLeave();
+            }
+        }
+
+        UpdateMeterDisplay();
     }
 
     public void Setup(int id, Sprite sprite, string order, Sprite dishSpriteParam, Vector3 position, Sprite[] meters, float patience = 60f)
@@ -53,6 +66,8 @@ public class Customer : MonoBehaviour
 
         patienceTime = patience;
         patienceTimer = patienceTime;
+        inGracePeriod = false;
+        graceTimer = 0f;
 
         transform.position = position;
         originalScale = transform.localScale;
@@ -164,6 +179,8 @@ public class Customer : MonoBehaviour
         isServed = false;
         orderTaken = false;
         patienceTimer = patienceTime;
+        inGracePeriod = false;
+        graceTimer = 0f;
         gameObject.SetActive(false);
         transform.localScale = originalScale;
 

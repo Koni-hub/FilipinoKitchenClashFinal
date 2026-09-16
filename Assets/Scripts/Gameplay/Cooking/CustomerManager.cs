@@ -8,7 +8,7 @@ public class CustomerManager : MonoBehaviour
 
     [Header("Settings")]
     public int maxCustomersAtOnce = 2;
-    public float spawnInterval = 30f;
+    public float spawnInterval = 5f;
     public float patienceTime = 60f;
 
     [Header("Customer Sprites")]
@@ -181,6 +181,12 @@ public class CustomerManager : MonoBehaviour
         if (meterSprites == null || meterSprites.Length == 0) return;
 
         GameObject customerObj = Instantiate(customerPrefab);
+
+        float targetHeight = 546f / 100f * 0.55f;
+        float spriteWorldHeight = randomSprite.rect.height / 100f;
+        float finalScale = targetHeight / spriteWorldHeight;
+        customerObj.transform.localScale = new Vector3(finalScale, finalScale, 1f);
+
         Customer newCustomer = customerObj.GetComponent<Customer>();
 
         if (newCustomer == null)

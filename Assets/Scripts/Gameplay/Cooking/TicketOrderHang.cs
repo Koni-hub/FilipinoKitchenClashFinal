@@ -64,8 +64,8 @@ public class TicketOrderHang : MonoBehaviour
 
         GameObject ticketObj = new GameObject("Ticket_" + dishName);
         ticketObj.transform.SetParent(hangSlots[slotIndex]);
-        ticketObj.transform.localPosition = new Vector3(0f, -1f, 0f);
-        ticketObj.transform.localScale = new Vector3(5f, 5f, 1f);
+        ticketObj.transform.localPosition = new Vector3(0f, -1.33f, 0f);
+        ticketObj.transform.localScale = new Vector3(0.0375f, 0.041f, 1f);
 
         SpriteRenderer sr = ticketObj.AddComponent<SpriteRenderer>();
         sr.sprite = dishSprite;

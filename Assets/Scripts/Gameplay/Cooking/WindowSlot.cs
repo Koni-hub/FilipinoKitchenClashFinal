@@ -9,7 +9,7 @@ public class WindowSlot : MonoBehaviour
     public bool isOccupied = false;
 
     [Header("Cooldown")]
-    public float cooldownTime = 30f;
+    public float cooldownTime = 10f;
     public float cooldownTimer = 0f;
     public bool isOnCooldown = false;
 

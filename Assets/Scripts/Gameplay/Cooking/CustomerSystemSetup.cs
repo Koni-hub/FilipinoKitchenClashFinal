@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class CustomerSystemSetup : MonoBehaviour
@@ -39,8 +40,16 @@ public class CustomerSystemSetup : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StopAllCoroutines();
-        StartCoroutine(SetupDelayed());
+        if (scene.name == "UI_Cooking_Area")
+        {
+            gameObject.SetActive(true);
+            StopAllCoroutines();
+            StartCoroutine(SetupDelayed());
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator SetupDelayed()
@@ -48,6 +57,13 @@ public class CustomerSystemSetup : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         if (IsCustomerSystemAlreadySetup()) yield break;
+
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            GameObject es = new GameObject("EventSystem");
+            es.AddComponent<EventSystem>();
+            es.AddComponent<StandaloneInputModule>();
+        }
 
         LoadSprites();
         SetupCustomerSystem();
@@ -120,6 +136,7 @@ public class CustomerSystemSetup : MonoBehaviour
         CreateTicketBox();
         CreateTicketOrderHang();
         CreateOverlayCanvas();
+        SetupStationButtons();
     }
 
     private Sprite[] GetMeterSprites(string dish, int count)
@@ -227,11 +244,17 @@ public class CustomerSystemSetup : MonoBehaviour
         hang.maxSlots = 2;
         hang.hangSlots = new Transform[2];
 
+        Vector3[] slotPositions = new Vector3[]
+        {
+            new Vector3(-10.614f, 0f, 0f),
+            new Vector3(-0.088f, 0f, 0f)
+        };
+
         for (int i = 0; i < 2; i++)
         {
             GameObject slot = new GameObject("HangSlot_" + i);
             slot.transform.SetParent(hangObj.transform);
-            slot.transform.localPosition = new Vector3(i * 4f - 2f, 0f, 0f);
+            slot.transform.localPosition = slotPositions[i];
             hang.hangSlots[i] = slot.transform;
         }
     }
@@ -257,17 +280,9 @@ public class CustomerSystemSetup : MonoBehaviour
         Image panelBg = panel.AddComponent<Image>();
         panelBg.color = new Color(0, 0, 0, 0.7f);
 
-        GameObject closeArea = new GameObject("CloseArea");
-        closeArea.transform.SetParent(panel.transform, false);
-        RectTransform closeRect = closeArea.AddComponent<RectTransform>();
-        closeRect.anchorMin = Vector2.zero;
-        closeRect.anchorMax = Vector2.one;
-        closeRect.sizeDelta = Vector2.zero;
-        Image closeImg = closeArea.AddComponent<Image>();
-        closeImg.color = Color.clear;
-        Button closeBtn = closeArea.AddComponent<Button>();
-        closeBtn.targetGraphic = closeImg;
-        closeBtn.onClick.AddListener(() =>
+        Button panelBtn = panel.AddComponent<Button>();
+        panelBtn.targetGraphic = panelBg;
+        panelBtn.onClick.AddListener(() =>
         {
             if (TicketBoxOverlay.Instance != null)
                 TicketBoxOverlay.Instance.Hide();
@@ -282,7 +297,7 @@ public class CustomerSystemSetup : MonoBehaviour
         scrollRect.sizeDelta = Vector2.zero;
 
         HorizontalLayoutGroup hlg = scrollArea.AddComponent<HorizontalLayoutGroup>();
-        hlg.spacing = 20f;
+        hlg.spacing = 45f;
         hlg.childAlignment = TextAnchor.MiddleCenter;
         hlg.padding = new RectOffset(10, 10, 10, 10);
         hlg.childForceExpandWidth = false;
@@ -294,5 +309,40 @@ public class CustomerSystemSetup : MonoBehaviour
         overlay.ticketContainer = scrollArea.transform;
 
         panel.SetActive(false);
+    }
+
+    private void SetupStationButtons()
+    {
+        SetupStationButton("bt cooking station", "UI_Cooking_Area");
+        SetupStationButton("bt prepping station", "UI_PreppingArea");
+        SetupStationButton("bt mini market", "UI_Mini_Market");
+    }
+
+    private void SetupStationButton(string buttonName, string sceneName)
+    {
+        GameObject btn = GameObject.Find(buttonName);
+        if (btn == null)
+        {
+            Debug.LogWarning($"[CustomerSystemSetup] Button '{buttonName}' not found!");
+            return;
+        }
+
+        if (btn.GetComponent<Collider2D>() == null)
+        {
+            BoxCollider2D col = btn.AddComponent<BoxCollider2D>();
+            SpriteRenderer sr = btn.GetComponent<SpriteRenderer>();
+            if (sr != null && sr.sprite != null)
+            {
+                Vector2 spriteSize = sr.sprite.bounds.size;
+                col.size = new Vector2(spriteSize.x * 1.2f, spriteSize.y * 1.2f);
+            }
+            else
+            {
+                col.size = new Vector2(12f, 4f);
+            }
+        }
+
+        StationButton stationBtn = btn.AddComponent<StationButton>();
+        stationBtn.targetScene = sceneName;
     }
 }

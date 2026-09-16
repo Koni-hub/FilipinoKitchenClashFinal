@@ -39,8 +39,16 @@ public class DragSetup : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StopAllCoroutines();
-        StartCoroutine(SetupDelayed());
+        if (scene.name == "UI_Cooking_Area")
+        {
+            gameObject.SetActive(true);
+            StopAllCoroutines();
+            StartCoroutine(SetupDelayed());
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator SetupDelayed()

@@ -12,10 +12,8 @@ public class RatingManager : MonoBehaviour
 
     void Start()
     {
-        if (ratingBarRenderer != null && rate0Sprite != null)
-        {
-            ratingBarRenderer.sprite = rate0Sprite;
-        }
+        int savedRating = PlayerPrefs.GetInt("GameRating", 0);
+        SetRating(savedRating);
     }
 
     public void SetRating(int value)

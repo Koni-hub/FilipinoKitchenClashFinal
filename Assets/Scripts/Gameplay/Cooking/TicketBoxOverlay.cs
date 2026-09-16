@@ -115,11 +115,11 @@ public class TicketBoxOverlay : MonoBehaviour
         ticketBtn.transform.SetParent(ticketContainer, false);
 
         RectTransform rectTransform = ticketBtn.AddComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(180f, 180f);
+        rectTransform.sizeDelta = new Vector2(250f, 250f);
 
         LayoutElement ticketLE = ticketBtn.AddComponent<LayoutElement>();
-        ticketLE.preferredWidth = 180f;
-        ticketLE.preferredHeight = 180f;
+        ticketLE.preferredWidth = 250f;
+        ticketLE.preferredHeight = 250f;
 
         Image bgImage = ticketBtn.AddComponent<Image>();
         bgImage.color = new Color(0, 0, 0, 0.01f);
@@ -146,11 +146,11 @@ public class TicketBoxOverlay : MonoBehaviour
         iconObj.transform.SetParent(parent, false);
 
         RectTransform iconRect = iconObj.AddComponent<RectTransform>();
-        iconRect.sizeDelta = new Vector2(150f, 150f);
+        iconRect.sizeDelta = new Vector2(250f, 250f);
 
         LayoutElement iconLE = iconObj.AddComponent<LayoutElement>();
-        iconLE.preferredWidth = 150f;
-        iconLE.preferredHeight = 150f;
+        iconLE.preferredWidth = 250f;
+        iconLE.preferredHeight = 250f;
 
         Image iconImage = iconObj.AddComponent<Image>();
         iconImage.sprite = dishSpriteMap[dishName];
@@ -182,7 +182,14 @@ public class TicketBoxOverlay : MonoBehaviour
             }
         }
 
-        Hide();
+        if (TicketBox.Instance != null && TicketBox.Instance.HasTickets())
+        {
+            PopulateTickets();
+        }
+        else
+        {
+            Hide();
+        }
     }
 
     private void ClearTickets()
