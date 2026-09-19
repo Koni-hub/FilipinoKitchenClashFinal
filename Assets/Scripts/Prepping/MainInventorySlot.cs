@@ -32,7 +32,17 @@ public class MainInventorySlot : MonoBehaviour, IPointerClickHandler
     {
         mainInventory = GameObject.Find("MainInventory"); 
         inventoryManager = GameObject.Find("MainInventory").GetComponent<MainInventory>();
-        spawnParent = GameObject.Find("SpawnedIngredients").transform; 
+        spawnParent = GameObject.Find("SpawnedIngredients").transform;
+
+        if (IngredientLookup.Instance != null)
+        {
+            string[] names = { "Garlic", "Onion", "Tomato", "LaurelLeaves" };
+            for (int i = 0; i < spawnImages.Length && i < names.Length; i++)
+            {
+                if (spawnImages[i] != null)
+                    IngredientLookup.Instance.Register(names[i], spawnImages[i].sprite);
+            }
+        }
     }
 
     public void AddItem(string itemName, int quantity, Sprite itemSprite)
@@ -97,11 +107,12 @@ public class MainInventorySlot : MonoBehaviour, IPointerClickHandler
         // CONVERTS THE POSITION OF SNAP POINT TO THAT OF SPAWN INGREDIENT
         RectTransform snapPointRect = inventoryManager.snapPoints[snapPointIndex].GetComponent<RectTransform>();
         RectTransform spawnParentRect = spawnParent.GetComponent<RectTransform>(); // this is where it comes from
-        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, snapPointRect.position);
+        Camera cam = Camera.main;
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, snapPointRect.position);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             spawnParentRect,
             screenPoint,
-            null,
+            cam,
             out Vector2 localPoint
         );
 
@@ -110,6 +121,11 @@ public class MainInventorySlot : MonoBehaviour, IPointerClickHandler
         {
             dragDrop.spawnPositionCopy = localPoint;
             dragDrop.snapPointIndex = snapPointIndex;
+
+            if (PreppingSync.Instance != null && !string.IsNullOrEmpty(dragDrop.syncId))
+            {
+                PreppingSync.Instance.SendSpawn(dragDrop.syncId, itemName, localPoint, snapPointIndex);
+            }
         }
 
         spawnedImage.GetComponent<RectTransform>().anchoredPosition = localPoint;

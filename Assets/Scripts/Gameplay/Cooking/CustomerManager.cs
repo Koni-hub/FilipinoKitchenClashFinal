@@ -161,7 +161,7 @@ public class CustomerManager : MonoBehaviour
         }
     }
 
-    private void SpawnCustomerInSlot(WindowSlot slot)
+    public void SpawnCustomerInSlot(WindowSlot slot, int overrideCustomerId = -1)
     {
         if (slot == null || !slot.CanSpawn()) return;
         if (customerPrefab == null)
@@ -198,7 +198,8 @@ public class CustomerManager : MonoBehaviour
         newCustomer.OnCustomerServed += HandleCustomerServed;
         newCustomer.OnCustomerLeft += HandleCustomerLeft;
 
-        newCustomer.Setup(nextCustomerIndex, randomSprite, randomDish, dishSprite, slot.GetSpawnPosition(), meterSprites, patienceTime);
+        int customerId = overrideCustomerId >= 0 ? overrideCustomerId : nextCustomerIndex;
+        newCustomer.Setup(customerId, randomSprite, randomDish, dishSprite, slot.GetSpawnPosition(), meterSprites, patienceTime);
 
         if (newCustomer.patienceMeter != null)
         {
@@ -213,6 +214,11 @@ public class CustomerManager : MonoBehaviour
 
         slot.AssignCustomer(newCustomer);
         activeCustomers.Add(newCustomer);
+
+        if (CookingSync.Instance != null && GameManager.Instance != null && GameManager.Instance.IsHost)
+        {
+            CookingSync.Instance.SendCustomerSpawn(newCustomer.customerID, randomDish, slot.slotIndex);
+        }
     }
 
     private Sprite GetDishSprite(string dishName)
@@ -247,6 +253,11 @@ public class CustomerManager : MonoBehaviour
 
     private void HandleCustomerServed(Customer customer)
     {
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.AddScore(100);
+        }
+
         RemoveCustomer(customer);
         spawnTimer = spawnInterval;
     }

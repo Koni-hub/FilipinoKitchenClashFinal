@@ -48,15 +48,21 @@ public class BoxFunction : MonoBehaviour
     {
         count--;
         Debug.Log(count);
+
         if (count <= 0)
         {
-            // Destroy all spawned images of this ingredient
             foreach (GameObject image in spawnedBasketImages)
             {
                 if (image != null)
+                {
+                    DragNDrop dragDrop = image.GetComponent<DragNDrop>();
+                    if (dragDrop != null && !string.IsNullOrEmpty(dragDrop.syncId) && PreppingSync.Instance != null)
+                    {
+                        PreppingSync.Instance.SendDelete(dragDrop.syncId);
+                    }
                     Destroy(image);
+                }
             }
-            // Free all their positions
             foreach (Vector2 position in spawnedPositions)
             {
                 basketFunction.RemoveIngredient(position);
@@ -67,10 +73,14 @@ public class BoxFunction : MonoBehaviour
         }
         else if (count > 0 && count <= 2)
         {
-            // Only remove the most recently added one
             int last = spawnedBasketImages.Count - 1;
             if (last >= 0 && spawnedBasketImages[last] != null)
             {
+                DragNDrop dragDrop = spawnedBasketImages[last].GetComponent<DragNDrop>();
+                if (dragDrop != null && !string.IsNullOrEmpty(dragDrop.syncId) && PreppingSync.Instance != null)
+                {
+                    PreppingSync.Instance.SendDelete(dragDrop.syncId);
+                }
                 Destroy(spawnedBasketImages[last]);
                 basketFunction.RemoveIngredient(spawnedPositions[last]);
                 spawnedBasketImages.RemoveAt(last);

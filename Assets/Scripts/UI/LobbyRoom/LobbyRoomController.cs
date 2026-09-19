@@ -19,7 +19,7 @@ public class LobbyRoomController : MonoBehaviour
     [SerializeField] private Button backButton;
 
     [Header("Scene")]
-    [SerializeField] private string characterSelectionSceneName = "UI_CharacterSelection";
+    [SerializeField] private string gameSceneName = "UI_PreppingArea";
 
     private NetworkManager networkManager;
     private bool isHost = false;
@@ -291,10 +291,10 @@ public class LobbyRoomController : MonoBehaviour
 
         UnityMainThreadDispatcher.ExecuteOnMainThread(() =>
         {
-            if (msg == RoomProtocol.GO_CHARSELECT)
+            if (msg == RoomProtocol.START_GAME)
             {
-                Debug.Log("[Lobby] Host says go to character selection.");
-                LoadCharacterSelection();
+                Debug.Log("[Lobby] Host says start game!");
+                LoadGameScene();
             }
             else if (msg == "HOST_READY")
             {
@@ -426,15 +426,15 @@ public class LobbyRoomController : MonoBehaviour
             return;
         }
 
-        Debug.Log("[Lobby] Sending GO_CHARSELECT to client and loading scene...");
-        networkManager.Host.SendToClient(RoomProtocol.GO_CHARSELECT);
-        LoadCharacterSelection();
+        Debug.Log("[Lobby] Sending START_GAME to client and loading scene...");
+        networkManager.Host.SendToClient(RoomProtocol.START_GAME);
+        LoadGameScene();
     }
 
-    private void LoadCharacterSelection()
+    private void LoadGameScene()
     {
-        Debug.Log($"[Lobby] Loading scene: {characterSelectionSceneName}");
-        SceneManager.LoadScene(characterSelectionSceneName);
+        Debug.Log($"[Lobby] Loading scene: {gameSceneName}");
+        SceneManager.LoadScene(gameSceneName);
     }
 
     private void ReturnToJoinRoom()

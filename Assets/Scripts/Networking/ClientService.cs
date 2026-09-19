@@ -332,14 +332,6 @@ public class ClientService : IDisposable
             return;
         }
 
-        // ── GO_CHARSELECT ─────────────────────────────────────────────────────
-        if (msg == RoomProtocol.GO_CHARSELECT)
-        {
-            Debug.Log("[CLIENT] Host sent GO_CHARSELECT.");
-            UnityMainThreadDispatcher.ExecuteOnMainThread(() => OnMessageReceived?.Invoke(msg));
-            return;
-        }
-
         // ── Room full ─────────────────────────────────────────────────────────
         if (msg == RoomProtocol.FULL)
         {

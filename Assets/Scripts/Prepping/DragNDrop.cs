@@ -20,6 +20,9 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
     public Vector2 chopBoardPosition;
     public bool sinkPositionTaken = false;
     public bool chopBoardPositionTaken = false;
+
+    [HideInInspector] public string syncId = "";
+
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -29,6 +32,12 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
         inventorySlot = FindObjectsOfType<MainInventorySlot>();
         sinkFunction = GameObject.Find("SinkSnapPoint").GetComponent<SinkFunction>();
         choppingBoardFunction = GameObject.Find("ChoppingBoard").GetComponent<ChoppingBoardFunction>();
+
+        if (string.IsNullOrEmpty(syncId) && PreppingSync.Instance != null)
+        {
+            syncId = PreppingSync.Instance.GenerateId();
+            PreppingSync.Instance.RegisterSyncedObject(syncId, gameObject);
+        }
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -132,6 +141,12 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
                     point.isOccupied = true;
                     snapPointIndex = System.Array.IndexOf(snapPoints, point);
                     spawnPositionCopy = rectTransform.anchoredPosition;
+
+                    if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
+                    {
+                        PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
+                    }
+
                     return;
                 }
             }
@@ -142,6 +157,12 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
             spawnPositionCopy = rectTransform.anchoredPosition;
             sinkFunction.selectedShader.SetActive(false);
             SnapPointShaderOff();
+
+            if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
+            {
+                PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
+            }
+
             return;
         }
         

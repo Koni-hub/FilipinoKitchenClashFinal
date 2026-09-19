@@ -17,6 +17,9 @@ public class WorldDrag : MonoBehaviour
     [Header("Attach Settings")]
     public bool attachToParent = false;
 
+    [Header("Network Sync")]
+    public string syncId = "";
+
     public System.Action OnSnapped;
     public System.Action OnReturned;
 
@@ -146,6 +149,8 @@ public class WorldDrag : MonoBehaviour
             {
                 StartCoroutine(SnapToPosition(currentSnapZone.snapPosition));
             }
+
+            SendNetworkSync(nearestZone);
         }
         else
         {
@@ -280,6 +285,52 @@ public class WorldDrag : MonoBehaviour
         if (childSpriteRenderer != null && originalSprite != null)
         {
             childSpriteRenderer.sprite = originalSprite;
+        }
+    }
+
+    private void SendNetworkSync(SnapZone zone)
+    {
+        if (CookingSync.Instance == null || GameManager.Instance == null) return;
+
+        string zoneName = zone.gameObject.name;
+
+        if (zoneName == "PotSnapZone" && attachToParent)
+        {
+            string ingredientId = !string.IsNullOrEmpty(syncId) ? syncId : gameObject.name;
+            int potIndex = 0;
+
+            if (snapZones != null)
+            {
+                for (int i = 0; i < snapZones.Length; i++)
+                {
+                    if (snapZones[i] == zone)
+                    {
+                        potIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            CookingSync.Instance.SendAddToPot(ingredientId, potIndex);
+        }
+        else if (zoneName.StartsWith("ServingSnapZone"))
+        {
+            int customerId = -1;
+
+            string indexStr = zoneName.Replace("ServingSnapZone", "").TrimStart('_');
+            int.TryParse(indexStr, out int zoneIndex);
+
+            if (CustomerManager.Instance != null && CustomerManager.Instance.windowSlots != null &&
+                zoneIndex >= 0 && zoneIndex < CustomerManager.Instance.windowSlots.Length)
+            {
+                WindowSlot slot = CustomerManager.Instance.windowSlots[zoneIndex];
+                if (slot != null && slot.isOccupied && slot.currentCustomer != null)
+                {
+                    customerId = slot.currentCustomer.customerID;
+                }
+            }
+
+            CookingSync.Instance.SendServeDish(gameObject.name, customerId);
         }
     }
 }

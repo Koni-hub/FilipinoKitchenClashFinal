@@ -20,6 +20,12 @@ public class SinkFunction : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
     {
         canvas = GameObject.Find("NewCanvas").GetComponent<Canvas>();
         originalScale = selectedShader.transform.localScale;
+
+        if (IngredientLookup.Instance != null)
+        {
+            IngredientLookup.Instance.RegisterWashSprites("LaurelLeaves", new Sprite[] { washedObjects[0].sprite });
+            IngredientLookup.Instance.RegisterWashSprites("Pork", new Sprite[] { washedObjects[1].sprite });
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -39,6 +45,11 @@ public class SinkFunction : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
         if (eventData.pointerDrag != null)
         {
             currentItem = eventData.pointerDrag;
+            string originalTag = currentItem.tag;
+            string newTag = originalTag;
+
+            int washSpriteIndex = -1;
+
             switch (currentItem.tag)
             {
                 case "LaurelLeaves":
@@ -46,13 +57,26 @@ public class SinkFunction : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
                     StartCoroutine(PlayWaterAnimation());
                     currentItem.GetComponent<Image>().sprite = washedObjects[0].sprite;
                     currentItem.tag = "WashedLaurelLeaves";
+                    newTag = "WashedLaurelLeaves";
+                    washSpriteIndex = 0;
                     break;
                 case "Pork":
                     ConvertScreenToLocalPoint(eventData);
                     StartCoroutine(PlayWaterAnimation());
                     currentItem.GetComponent<Image>().sprite = washedObjects[1].sprite;
                     currentItem.tag = "WashedPork";
+                    newTag = "WashedPork";
+                    washSpriteIndex = 1;
                     break;
+            }
+
+            if (originalTag != newTag && PreppingSync.Instance != null)
+            {
+                DragNDrop dragDrop = currentItem.GetComponent<DragNDrop>();
+                if (dragDrop != null && !string.IsNullOrEmpty(dragDrop.syncId))
+                {
+                    PreppingSync.Instance.SendWashComplete(dragDrop.syncId, originalTag, newTag, washSpriteIndex);
+                }
             }
         }
     }
