@@ -255,6 +255,8 @@ public class CatchGameSetup : MonoBehaviour
     private void OnDishButtonClicked(string dishName)
     {
         currentDish = dishName;
+        DontDestroy dontDestroy = FindObjectOfType<DontDestroy>();
+        dontDestroy.dishName = dishName;
         dishSelected = true;
         Debug.Log("Dish selected: " + dishName);
 

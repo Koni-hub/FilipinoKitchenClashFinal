@@ -3,9 +3,20 @@ using UnityEngine.SceneManagement;
 
 public class DontDestroy : MonoBehaviour
 {
+    public string dishName;
     public void PlayGame()
     {
-        string sceneToLoad = "UI_PreppingArea";
-        SceneManager.LoadScene(sceneToLoad);
+        switch (dishName)
+        {
+            case "Adobo":
+                SceneManager.LoadScene("UI_AdoboPreppingArea");
+                break;
+            case "Sinigang":
+                SceneManager.LoadScene("UI_SinigangPreppingArea");
+                break;
+            case "Sisig":
+                SceneManager.LoadScene("UI_SisigPreppingArea");
+                break;
+        }
     }
 }
