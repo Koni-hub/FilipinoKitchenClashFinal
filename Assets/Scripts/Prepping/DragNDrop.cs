@@ -18,7 +18,6 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
     public int snapPointIndex;
     public Vector2 sinkPosition;
     public Vector2 chopBoardPosition;
-    Vector2 currentSnapPointLoc;
     public bool sinkPositionTaken = false;
     public bool chopBoardPositionTaken = false;
 
@@ -34,11 +33,11 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
         sinkFunction = GameObject.Find("SinkSnapPoint").GetComponent<SinkFunction>();
         choppingBoardFunction = GameObject.Find("ChoppingBoard").GetComponent<ChoppingBoardFunction>();
 
-        // if (string.IsNullOrEmpty(syncId) && PreppingSync.Instance != null)
-        // {
-        //     syncId = PreppingSync.Instance.GenerateId();
-        //     PreppingSync.Instance.RegisterSyncedObject(syncId, gameObject);
-        // }
+        if (string.IsNullOrEmpty(syncId) && PreppingSync.Instance != null)
+        {
+            syncId = PreppingSync.Instance.GenerateId();
+            PreppingSync.Instance.RegisterSyncedObject(syncId, gameObject);
+        }
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -46,8 +45,7 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
         canvasGroup.blocksRaycasts = false;
         transform.localScale += new Vector3(0.2f, 0.2f, 1f); 
 
-        currentSnapPointLoc = snapPoints[snapPointIndex].GetComponent<RectTransform>().position;
-        if (spawnPositionCopy == currentSnapPointLoc)
+        if (spawnPositionCopy != sinkPosition && spawnPositionCopy != chopBoardPosition)
             snapPoints[snapPointIndex].GetComponent<GeneralSnapPoint>().isOccupied = false;
 
         foreach (GeneralSnapPoint point in snapPoints)
@@ -68,7 +66,7 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
             choppingBoardFunction.selectedShader.SetActive(true);
         }
 
-        if (!sinkFunction.isOccupied && transform.tag == "LaurelLeaves")
+        if (!sinkFunction.isOccupied && (transform.tag == "LaurelLeaves" || transform.tag == "Pork"))
             sinkFunction.selectedShader.SetActive(true);       
 
         if(!choppingBoardFunction.isOccupied)
@@ -141,10 +139,10 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
                     snapPointIndex = System.Array.IndexOf(snapPoints, point);
                     spawnPositionCopy = rectTransform.anchoredPosition;
 
-                    // if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
-                    // {
-                    //     PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
-                    // }
+                    if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
+                    {
+                        PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
+                    }
 
                     return;
                 }
@@ -155,12 +153,12 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
         {
             spawnPositionCopy = rectTransform.anchoredPosition;
             sinkFunction.selectedShader.SetActive(false);
+            choppingBoardFunction.selectedShader.SetActive(false);
             SnapPointShaderOff();
-            currentSnapPointLoc = rectTransform.anchoredPosition;
-            // if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
-            // {
-            //     PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
-            // }
+            if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
+            {
+                PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
+            }
 
             return;
         }
@@ -168,13 +166,13 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
         if (rectTransform.anchoredPosition == chopBoardPosition)
         {
             spawnPositionCopy = rectTransform.anchoredPosition;
+            sinkFunction.selectedShader.SetActive(false);
             choppingBoardFunction.selectedShader.SetActive(false);
             SnapPointShaderOff();
-            currentSnapPointLoc = rectTransform.anchoredPosition;
-            // if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
-            // {
-            //     PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
-            // }
+            if (PreppingSync.Instance != null && !string.IsNullOrEmpty(syncId))
+            {
+                PreppingSync.Instance.SendMove(syncId, spawnPositionCopy, snapPointIndex);
+            }
 
             return;
         }
@@ -182,13 +180,20 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
         // No snap point found — snap back to last position
         rectTransform.anchoredPosition = spawnPositionCopy;
         if (spawnPositionCopy == sinkPosition)
+        {
             sinkFunction.isOccupied = true;
-        if (spawnPositionCopy == chopBoardPosition)
+        }
+        else if (spawnPositionCopy == chopBoardPosition)
+        {
             choppingBoardFunction.isOccupied = true;
+        }
+        else
+        {
+            snapPoints[snapPointIndex].isOccupied = true;
+        }
         SnapPointShaderOff();
         sinkFunction.selectedShader.SetActive(false);
         choppingBoardFunction.selectedShader.SetActive(false);
-        snapPoints[snapPointIndex].isOccupied = true;
     }
 
     void SnapPointShaderOff()

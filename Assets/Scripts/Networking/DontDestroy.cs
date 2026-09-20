@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class DontDestroy : MonoBehaviour
 {
     public string dishName;
+
     public void PlayGame()
     {
         switch (dishName)
@@ -19,4 +20,13 @@ public class DontDestroy : MonoBehaviour
                 break;
         }
     }
+
+    public void GoToCookingArea()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if (sceneName == "UI_AdoboPreppingArea" || sceneName == "UI_SinigangPreppingArea" || sceneName == "UI_SisigPreppingArea")
+            SceneManager.LoadScene("UI_Cooking_Area");
+    }
+    
 }
