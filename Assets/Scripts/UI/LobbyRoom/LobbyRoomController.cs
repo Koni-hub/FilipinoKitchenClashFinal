@@ -19,7 +19,7 @@ public class LobbyRoomController : MonoBehaviour
     [SerializeField] private Button backButton;
 
     [Header("Scene")]
-    [SerializeField] private string gameSceneName = "UI_PreppingArea";
+    [SerializeField] private string gameSceneName = "UI_AdoboPreppingArea";
 
     private NetworkManager networkManager;
     private bool isHost = false;

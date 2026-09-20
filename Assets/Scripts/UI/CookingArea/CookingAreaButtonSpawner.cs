@@ -11,7 +11,7 @@ public class CookingAreaButtonSpawner : MonoBehaviour
 
         CreateButton(canvas, "GoToPreppingButton", "Go to Prepping",
             new Vector2(130, 0), new Vector2(0, 0.5f), new Color(0.2f, 0.6f, 0.3f, 1f),
-            "UI_PreppingArea");
+            "UI_AdoboPreppingArea");
     }
 
     private void CreateButton(Canvas canvas, string name, string label,
