@@ -22,14 +22,14 @@ public class StockFunction : MonoBehaviour
     void Start()
     {
         newBasket = GameObject.Find("Basket").GetComponent<NewBasket>();
-        ingredientCount = CatchGameManager.Instance.GetIngredientCount("Adobo", itemName);
+        // ingredientCount = CatchGameManager.Instance.GetIngredientCount("Adobo", itemName);
     }
 
     public void OnStockPressed()
     {
 
-        if (ingredientCount > 0)
-        {
+        // if (ingredientCount > 0)
+        // {
             foreach (Image icon in newBasket.icons)
             {
                 if (icon.sprite == ingredientIcon.sprite)
@@ -53,7 +53,7 @@ public class StockFunction : MonoBehaviour
             }   
             AddItemToInventory(itemName, quantity, sprite);
             ingredientCount--;
-        }
+        // }
     }
 
     void AddItemToInventory(string itemName, int quantity, Sprite sprite)

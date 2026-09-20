@@ -101,14 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc7ef2b8389bbc409aecb9f556b9551, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 0}
-  spawnPositionCopy: {x: 0, y: 0}
-  hasSpawnPosition: 0
   currentItem: {fileID: 0}
-  filledBowls:
-  - {fileID: 2444139368723920171, guid: b9947692e0d736d479dd3d63c7cac83e, type: 3}
-  - {fileID: 1019526760818707666, guid: 5c2e12bc1d1fdf944893b56eea43421f, type: 3}
-  - {fileID: 1173687793000664535, guid: dc23586883eb40d458900b687bf53dc7, type: 3}
-  - {fileID: 3627574544921484432, guid: f7f3a2a97a11271459127c3746581e98, type: 3}
-  - {fileID: 4052585475927998606, guid: 95b257469ede0ff4c9f857d93be92f3f, type: 3}
-  - {fileID: 1855994132836830600, guid: 70900bca99f93384cb7b5dd1accfdad5, type: 3}
+  canvas: {fileID: 0}
+  filledBowls: []
+  bowlName: 
+  BSP: {fileID: 0}
+  GSP: {fileID: 0}

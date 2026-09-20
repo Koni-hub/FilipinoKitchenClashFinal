@@ -6,40 +6,47 @@ using UnityEngine.UI;
 
 public class RefFunction : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] private Image image;
+    [SerializeField] private Image spawnImage;
     private Transform spawnParent;
-    private InventoryManager inventoryManager;
 
     void Start()
     {
-        spawnParent = GameObject.Find("InventoryCanvas").transform;
-        inventoryManager = GameObject.Find("InventoryCanvas").GetComponent<InventoryManager>(); // Initialize the inventoryManager reference by finding the InventoryCanvas GameObject and getting the InventoryManager component from it.
+        spawnParent = GameObject.Find("SpawnedIngredients").transform;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Image spawnedImage = Instantiate(image, spawnParent);
-        if (inventoryManager.place[1] == true)
+        GeneralSnapPoint[] snapPoints = FindObjectsOfType<GeneralSnapPoint>();
+
+        if (snapPoints[0].isOccupied)
         {
-            Debug.Log("No available spawn positions in the basket.");
+            Debug.Log("Place not available.");
             return;
         }
 
-        // GET THE SPAWN POSITION FROM THE BOWL MANAGER
-        Vector2 spawnPosition = inventoryManager.snapPoints[1].GetComponent<RectTransform>().anchoredPosition;
+        // SPAWN THE ITEM IN THE INVENTORY
+        Image spawnedImage = Instantiate(spawnImage, spawnParent);
 
-        // SET THE SPAWNED IMAGE POSITION TO THE SPAWN POSITION
-        spawnedImage.GetComponent<RectTransform>().anchoredPosition = spawnPosition;
-        DragDrop dragDrop = spawnedImage.GetComponent<DragDrop>();
-        GeneralSnapPoint[] snapPoints = FindObjectsOfType<GeneralSnapPoint>();
-        foreach (GeneralSnapPoint point in snapPoints)
+        // CONVERTS THE POSITION OF SNAP POINT TO THAT OF SPAWN INGREDIENT
+        RectTransform snapPointRect = snapPoints[0].GetComponent<RectTransform>();
+        RectTransform spawnParentRect = spawnParent.GetComponent<RectTransform>(); // this is where it comes from
+        Camera cam = Camera.main;
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, snapPointRect.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            spawnParentRect,
+            screenPoint,
+            cam,
+            out Vector2 localPoint
+        );
+
+        DragNDrop dragDrop = spawnedImage.GetComponent<DragNDrop>();
+        if (dragDrop != null)
         {
-            if (point.GetComponent<RectTransform>().anchoredPosition == spawnPosition)
-            {
-                inventoryManager.place[System.Array.IndexOf(inventoryManager.snapPoints, point)] = true;
-                point.isOccupied = true;
-                dragDrop.snapPoint = point;
-            }
+            dragDrop.spawnPositionCopy = localPoint;
+            dragDrop.snapPointIndex = 0;
         }
+
+        spawnedImage.GetComponent<RectTransform>().anchoredPosition = localPoint;
+        snapPoints[0].isOccupied = true;
     }
 }

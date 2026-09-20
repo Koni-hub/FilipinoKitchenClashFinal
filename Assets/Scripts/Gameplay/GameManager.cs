@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    // Comment out this whole method if planning to test play
     private void Start()
     {
         networkManager = NetworkManager.Instance;
@@ -53,6 +54,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"[GameManager] Initialized as {(isHost ? "HOST" : "CLIENT")}");
     }
 
+    // Comment out this whole method if planning to test play
     private void HandleHostMessage(string msg)
     {
         if (!RoomProtocol.IsGameMessage(msg)) return;
@@ -61,6 +63,7 @@ public class GameManager : MonoBehaviour
         OnGameMessageReceived?.Invoke(msg);
     }
 
+    // Comment out this whole method if planning to test play
     private void HandleClientMessage(string msg)
     {
         if (!RoomProtocol.IsGameMessage(msg)) return;
@@ -69,6 +72,7 @@ public class GameManager : MonoBehaviour
         OnGameMessageReceived?.Invoke(msg);
     }
 
+    // Comment out this whole method if planning to test play
     private void HandleHostDisconnected()
     {
         Debug.Log("[GameManager] Host disconnected! Returning to main menu.");
@@ -122,6 +126,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Comment out this whole method if planning to test play
     private void OnDestroy()
     {
         if (networkManager != null)

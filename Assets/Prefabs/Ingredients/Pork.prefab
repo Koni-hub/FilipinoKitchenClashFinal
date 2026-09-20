@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 3472073818313681052}
   - component: {fileID: 7227264752292268607}
   - component: {fileID: 7509123873211777138}
-  - component: {fileID: 3081173201117263142}
   - component: {fileID: 7412066831916064058}
+  - component: {fileID: 5029120489091196786}
   m_Layer: 5
   m_Name: Pork
   m_TagString: Pork
@@ -77,19 +77,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3081173201117263142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8290908788436577880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 271d550f2e589744b9b2127090482a35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvas: {fileID: 0}
 --- !u!225 &7412066831916064058
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -102,3 +89,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &5029120489091196786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8290908788436577880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 207af802e1bc7a846ba76446d8804ffd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  snapPoint: {fileID: 0}
+  spawnPositionCopy: {x: 0, y: 0}
+  snapPointIndex: 0
+  sinkPosition: {x: 0, y: 0}
+  chopBoardPosition: {x: 0, y: 0}
+  sinkPositionTaken: 0
+  chopBoardPositionTaken: 0
+  syncId: 

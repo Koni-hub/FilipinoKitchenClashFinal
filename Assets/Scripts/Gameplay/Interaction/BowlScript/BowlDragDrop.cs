@@ -15,6 +15,7 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
     public Canvas canvas;
     public Image[] filledBowls;
     public string bowlName;
+    public string[] bowlIngredients = new string[4];
     Vector2 genPointSize;
     Vector2 originalSize;
 
@@ -23,19 +24,24 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
     GeneralSnapPoint[] generalSnapPoints;
     public BowlSnapPoints BSP;
     public GeneralSnapPoint GSP;
+    private ChoppingBoardFunction choppingBoardFunction;
+    private SinkFunction sinkFunction;
+    private SendBowlIngredients sendBowlIngredients;
 
     // Initialize References
     private void Start()
     {
-        // bowlManager = GameObject.Find("Canvas").GetComponent<BowlManager>();
         rectTransform = GetComponent<RectTransform>();
+        sendBowlIngredients = GameObject.Find("DataHandler").GetComponent<SendBowlIngredients>();
         canvasGroup = GetComponent<CanvasGroup>();
         canvas = GameObject.Find("NewCanvas").GetComponent<Canvas>();
         snapPoints = FindObjectsOfType<BowlSnapPoints>();
         generalSnapPoints = FindObjectsOfType<GeneralSnapPoint>();
-        genPointSize = new Vector2(117.8653f, 88.9671f);
+        genPointSize = new Vector2(47f, 38f);
         originalSize = rectTransform.sizeDelta;
         GSP = null;
+        sinkFunction = GameObject.Find("SinkSnapPoint").GetComponent<SinkFunction>();
+        choppingBoardFunction = GameObject.Find("ChoppingBoard").GetComponent<ChoppingBoardFunction>();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -129,48 +135,7 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
         {
             currentItem = eventData.pointerDrag;
 
-            // switch(bowlName)
-            // {
-            //     case "WhiteBowl":
-            //         switch(currentItem.tag)
-            //         {
-            //             case "GarlicMinced":
-            //             transform.GetComponent<Image>().sprite = filledBowls[2].sprite;
-            //             Destroy(currentItem);
-            //             break;
-            //         }
-            //         break;
-            // }
-            
-            // switch(currentItem.tag)
-            // {
-            //     case "LaurelLeavesCut":
-            //         transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
-            //         Destroy(currentItem);
-            //         break;
-            //     case "PorkKawaliMinced":
-            //         transform.GetComponent<Image>().sprite = filledBowls[1].sprite;
-            //         transform.localScale += new Vector3(0.0f, 0.15f, 1f);
-            //         Destroy(currentItem);
-            //         break;
-            //     case "GarlicMinced":
-            //         transform.GetComponent<Image>().sprite = filledBowls[2].sprite;
-            //         Destroy(currentItem);
-            //         break;
-            //     case "OnionWedges":
-            //         transform.GetComponent<Image>().sprite = filledBowls[3].sprite;
-            //         Destroy(currentItem);
-            //         break;
-            //     case "OnionMinced":
-            //         transform.GetComponent<Image>().sprite = filledBowls[4].sprite;
-            //         Destroy(currentItem);
-            //         break;
-            //     case "TomatoWedges":
-            //         transform.GetComponent<Image>().sprite = filledBowls[5].sprite;
-            //         Destroy(currentItem);
-            //         break;
-                
-            // }
+            PutIngredientsOnBowl();
         }
     }
 
@@ -216,7 +181,7 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
 
                 if (distance <= point.snapRadius)
                 {
-                    rectTransform.sizeDelta = genPointSize;
+                    rectTransform.sizeDelta += genPointSize;
                     point.OnHoverExit();
                     SnapPointShaderOff();
                     if (BSP != null)
@@ -261,4 +226,55 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
             point.selectedShader.SetActive(false);
         }
     }
+
+    void PutIngredientsOnBowl()
+    {
+        if (bowlName == "SilverBowl")
+        {
+            if (currentItem.tag == "LaurelLeavesCut")
+            {
+                transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
+                Destroy(currentItem);
+                sendBowlIngredients.AddBowlIngredient("SilverBowlLaurelLeaves");
+                SnapPointShaderOff();
+                sinkFunction.selectedShader.SetActive(false);
+                choppingBoardFunction.selectedShader.SetActive(false);
+            }
+            else if (currentItem.tag == "PorkKawaliMinced")
+            {
+                transform.GetComponent<Image>().sprite = filledBowls[1].sprite;
+                Destroy(currentItem);
+                sendBowlIngredients.AddBowlIngredient("SilverBowlPorkBelly");
+                SnapPointShaderOff();
+                sinkFunction.selectedShader.SetActive(false);
+                choppingBoardFunction.selectedShader.SetActive(false);
+            }
+        }
+        else if (bowlName == "BlueBowl")
+        {
+            if (currentItem.tag == "OnionMinced")
+            {
+                transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
+                Destroy(currentItem);
+                sendBowlIngredients.AddBowlIngredient("BlueBowlOnionMinced");
+                SnapPointShaderOff();
+                sinkFunction.selectedShader.SetActive(false);
+                choppingBoardFunction.selectedShader.SetActive(false);
+            }
+        }
+        else if (bowlName == "WhiteBowl")
+        {
+            if (currentItem.tag == "GarlicMinced")
+            {
+                transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
+                Destroy(currentItem);
+                sendBowlIngredients.AddBowlIngredient("WhiteBowlGarlic");
+                SnapPointShaderOff();
+                sinkFunction.selectedShader.SetActive(false);
+                choppingBoardFunction.selectedShader.SetActive(false);
+            }
+        }
+    }
+
+
 }
