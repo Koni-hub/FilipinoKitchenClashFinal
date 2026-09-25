@@ -24,7 +24,7 @@ public class CharacterSelectionController : MonoBehaviour
     [SerializeField] private GameObject revealPanel;
 
     [Header("Scene")]
-    [SerializeField] private string gameSceneName = "UI_PreppingArea";
+    [SerializeField] private string gameSceneName = "UI_AdoboPreppingArea";
 
     private bool isHost;
     private bool roleAssigned = false;

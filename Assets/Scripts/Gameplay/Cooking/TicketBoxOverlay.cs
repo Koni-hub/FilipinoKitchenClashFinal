@@ -111,10 +111,10 @@ public class TicketBoxOverlay : MonoBehaviour
     {
         if (ticketContainer == null) return;
 
-        GameObject ticketBtn = new GameObject("Ticket_" + dishName);
+        GameObject ticketBtn = new GameObject("Ticket_" + dishName, typeof(RectTransform));
         ticketBtn.transform.SetParent(ticketContainer, false);
 
-        RectTransform rectTransform = ticketBtn.AddComponent<RectTransform>();
+        RectTransform rectTransform = ticketBtn.GetComponent<RectTransform>();
         rectTransform.sizeDelta = new Vector2(250f, 250f);
 
         LayoutElement ticketLE = ticketBtn.AddComponent<LayoutElement>();
@@ -142,10 +142,10 @@ public class TicketBoxOverlay : MonoBehaviour
     {
         if (!dishSpriteMap.ContainsKey(dishName) || dishSpriteMap[dishName] == null) return;
 
-        GameObject iconObj = new GameObject("Icon");
+        GameObject iconObj = new GameObject("Icon", typeof(RectTransform));
         iconObj.transform.SetParent(parent, false);
 
-        RectTransform iconRect = iconObj.AddComponent<RectTransform>();
+        RectTransform iconRect = iconObj.GetComponent<RectTransform>();
         iconRect.sizeDelta = new Vector2(250f, 250f);
 
         LayoutElement iconLE = iconObj.AddComponent<LayoutElement>();

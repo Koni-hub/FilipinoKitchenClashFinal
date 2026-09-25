@@ -21,7 +21,7 @@ public class PreppingAreaButtonSpawner : MonoBehaviour
     private void CreateButton(Canvas canvas, string name, string label,
         Vector2 position, Vector2 anchor, Color color, string sceneName)
     {
-        GameObject btnObj = new GameObject(name);
+        GameObject btnObj = new GameObject(name, typeof(RectTransform));
         btnObj.transform.SetParent(canvas.transform, false);
 
         Image bg = btnObj.AddComponent<Image>();
@@ -37,7 +37,7 @@ public class PreppingAreaButtonSpawner : MonoBehaviour
         rt.anchoredPosition = position;
         rt.sizeDelta = new Vector2(200, 50);
 
-        GameObject textObj = new GameObject("Text");
+        GameObject textObj = new GameObject("Text", typeof(RectTransform));
         textObj.transform.SetParent(btnObj.transform, false);
 
         Text uiText = textObj.AddComponent<Text>();

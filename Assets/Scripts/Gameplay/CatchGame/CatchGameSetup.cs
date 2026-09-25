@@ -157,7 +157,7 @@ public class CatchGameSetup : MonoBehaviour
 
         for (int i = 0; i < dishNames.Length; i++)
         {
-            GameObject btnObj = new GameObject("DishBtn_" + dishNames[i]);
+            GameObject btnObj = new GameObject("DishBtn_" + dishNames[i], typeof(RectTransform));
             btnObj.transform.SetParent(parent, false);
             Image btnBg = btnObj.AddComponent<Image>();
             btnBg.color = new Color(0.3f, 0.3f, 0.3f, 0.9f);
@@ -168,7 +168,7 @@ public class CatchGameSetup : MonoBehaviour
             btnRt.anchoredPosition = new Vector2(startX + i * (btnWidth + spacing), -40f);
             btnRt.sizeDelta = new Vector2(btnWidth, btnHeight);
 
-            GameObject textObj = new GameObject("Text");
+            GameObject textObj = new GameObject("Text", typeof(RectTransform));
             textObj.transform.SetParent(btnObj.transform, false);
             TMP_Text txt = textObj.AddComponent<TextMeshProUGUI>();
             txt.text = dishNames[i];
@@ -187,7 +187,7 @@ public class CatchGameSetup : MonoBehaviour
 
         // Start Button - always visible, right after dish buttons
         float startBtnX = startX + dishNames.Length * btnWidth + (dishNames.Length - 1) * spacing + spacing * 3;
-        startButtonObj = new GameObject("StartButton");
+        startButtonObj = new GameObject("StartButton", typeof(RectTransform));
         startButtonObj.transform.SetParent(parent, false);
         Image startBg = startButtonObj.AddComponent<Image>();
         startBg.color = new Color(0.2f, 0.7f, 0.2f, 1f);
@@ -198,7 +198,7 @@ public class CatchGameSetup : MonoBehaviour
         startRt.anchoredPosition = new Vector2(startBtnX, -40f);
         startRt.sizeDelta = new Vector2(startBtnWidth, btnHeight);
 
-        GameObject startTextObj = new GameObject("Text");
+        GameObject startTextObj = new GameObject("Text", typeof(RectTransform));
         startTextObj.transform.SetParent(startButtonObj.transform, false);
         startBtnText = startTextObj.AddComponent<TextMeshProUGUI>();
         startBtnText.text = "START";
@@ -218,7 +218,7 @@ public class CatchGameSetup : MonoBehaviour
         float stopBtnWidth = 150f;
         float stopBtnHeight = 50f;
 
-        stopButtonObj = new GameObject("StopButton");
+        stopButtonObj = new GameObject("StopButton", typeof(RectTransform));
         stopButtonObj.transform.SetParent(parent, false);
         Image stopBg = stopButtonObj.AddComponent<Image>();
         stopBg.color = new Color(0.8f, 0.2f, 0.2f, 1f);
@@ -229,7 +229,7 @@ public class CatchGameSetup : MonoBehaviour
         stopRt.anchoredPosition = new Vector2(-450f, -441f);
         stopRt.sizeDelta = new Vector2(stopBtnWidth, stopBtnHeight);
 
-        GameObject stopTextObj = new GameObject("Text");
+        GameObject stopTextObj = new GameObject("Text", typeof(RectTransform));
         stopTextObj.transform.SetParent(stopButtonObj.transform, false);
         TMP_Text stopTxt = stopTextObj.AddComponent<TextMeshProUGUI>();
         stopTxt.text = "STOP";

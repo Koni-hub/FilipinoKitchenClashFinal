@@ -229,9 +229,14 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
 
     void PutIngredientsOnBowl()
     {
+        if (currentItem == null) return;
+
+        string itemTag = currentItem.tag;
+        Debug.Log($"[Bowl] Drop on {bowlName} with tag: {itemTag}");
+
         if (bowlName == "SilverBowl")
         {
-            if (currentItem.tag == "LaurelLeavesCut")
+            if (itemTag == "LaurelLeavesCut" || itemTag == "WashedLaurelLeaves" || itemTag == "LaurelLeaves")
             {
                 transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
                 Destroy(currentItem);
@@ -239,8 +244,9 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
                 SnapPointShaderOff();
                 sinkFunction.selectedShader.SetActive(false);
                 choppingBoardFunction.selectedShader.SetActive(false);
+                Debug.Log("[Bowl] LaurelLeaves added to SilverBowl");
             }
-            else if (currentItem.tag == "PorkKawaliMinced")
+            else if (itemTag == "PorkKawaliMinced" || itemTag == "PorkKawaliCut" || itemTag == "WashedPork" || itemTag == "Pork")
             {
                 transform.GetComponent<Image>().sprite = filledBowls[1].sprite;
                 Destroy(currentItem);
@@ -248,11 +254,16 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
                 SnapPointShaderOff();
                 sinkFunction.selectedShader.SetActive(false);
                 choppingBoardFunction.selectedShader.SetActive(false);
+                Debug.Log("[Bowl] Pork added to SilverBowl");
+            }
+            else
+            {
+                Debug.LogWarning($"[Bowl] SilverBowl rejected tag: {itemTag}");
             }
         }
         else if (bowlName == "BlueBowl")
         {
-            if (currentItem.tag == "OnionMinced")
+            if (itemTag == "OnionMinced" || itemTag == "OnionWedges" || itemTag == "OnionQuartered" || itemTag == "OnionFirstCut" || itemTag == "Onion")
             {
                 transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
                 Destroy(currentItem);
@@ -260,11 +271,16 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
                 SnapPointShaderOff();
                 sinkFunction.selectedShader.SetActive(false);
                 choppingBoardFunction.selectedShader.SetActive(false);
+                Debug.Log("[Bowl] Onion added to BlueBowl");
+            }
+            else
+            {
+                Debug.LogWarning($"[Bowl] BlueBowl rejected tag: {itemTag}");
             }
         }
         else if (bowlName == "WhiteBowl")
         {
-            if (currentItem.tag == "GarlicMinced")
+            if (itemTag == "GarlicMinced" || itemTag == "Garlic")
             {
                 transform.GetComponent<Image>().sprite = filledBowls[0].sprite;
                 Destroy(currentItem);
@@ -272,6 +288,11 @@ public class BowlDragDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, I
                 SnapPointShaderOff();
                 sinkFunction.selectedShader.SetActive(false);
                 choppingBoardFunction.selectedShader.SetActive(false);
+                Debug.Log("[Bowl] Garlic added to WhiteBowl");
+            }
+            else
+            {
+                Debug.LogWarning($"[Bowl] WhiteBowl rejected tag: {itemTag}");
             }
         }
     }

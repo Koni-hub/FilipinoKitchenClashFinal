@@ -266,13 +266,17 @@ public class CustomerSystemSetup : MonoBehaviour
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 100;
 
-        canvasObj.AddComponent<CanvasScaler>();
+        CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        GameObject panel = new GameObject("OverlayPanel");
+        GameObject panel = new GameObject("OverlayPanel", typeof(RectTransform));
         panel.transform.SetParent(canvasObj.transform, false);
 
-        RectTransform panelRect = panel.AddComponent<RectTransform>();
+        RectTransform panelRect = panel.GetComponent<RectTransform>();
         panelRect.anchorMin = Vector2.zero;
         panelRect.anchorMax = Vector2.one;
         panelRect.sizeDelta = Vector2.zero;
@@ -288,10 +292,10 @@ public class CustomerSystemSetup : MonoBehaviour
                 TicketBoxOverlay.Instance.Hide();
         });
 
-        GameObject scrollArea = new GameObject("TicketContainer");
+        GameObject scrollArea = new GameObject("TicketContainer", typeof(RectTransform));
         scrollArea.transform.SetParent(panel.transform, false);
 
-        RectTransform scrollRect = scrollArea.AddComponent<RectTransform>();
+        RectTransform scrollRect = scrollArea.GetComponent<RectTransform>();
         scrollRect.anchorMin = new Vector2(0.1f, 0.2f);
         scrollRect.anchorMax = new Vector2(0.9f, 0.8f);
         scrollRect.sizeDelta = Vector2.zero;
@@ -314,7 +318,7 @@ public class CustomerSystemSetup : MonoBehaviour
     private void SetupStationButtons()
     {
         SetupStationButton("bt cooking station", "UI_Cooking_Area");
-        SetupStationButton("bt prepping station", "UI_PreppingArea");
+        SetupStationButton("bt prepping station", "UI_AdoboPreppingArea");
         SetupStationButton("bt mini market", "UI_Mini_Market");
     }
 

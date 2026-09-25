@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CookingGuideUI : MonoBehaviour
 {
@@ -57,17 +58,29 @@ public class CookingGuideUI : MonoBehaviour
 
     private void LoadRecipe(RecipeGuide recipe)
     {
-        // Clear any previous slots
+        if (contentContainer == null)
+        {
+            Debug.LogError("[CookingGuideUI] contentContainer is null!");
+            return;
+        }
+
         foreach (Transform child in contentContainer)
         {
             Destroy(child.gameObject);
         }
         activeSlots.Clear();
 
-        // Instantiate slots dynamically
         foreach (var ingredient in recipe.requiredIngredients)
         {
-            GameObject slotGO = Instantiate(slotPrefab, contentContainer);
+            GameObject slotGO;
+            if (slotPrefab != null)
+            {
+                slotGO = Instantiate(slotPrefab, contentContainer);
+            }
+            else
+            {
+                slotGO = CreateSlotRuntime(ingredient);
+            }
             slotGO.SetActive(true);
 
             IngredientSlotUI slotUI = slotGO.GetComponent<IngredientSlotUI>();
@@ -77,6 +90,52 @@ public class CookingGuideUI : MonoBehaviour
                 activeSlots.Add(slotUI);
             }
         }
+    }
+
+    private GameObject CreateSlotRuntime(IngredientRequirement ingredient)
+    {
+        GameObject slotGO = new GameObject($"Slot_{ingredient.ingredientName}", typeof(RectTransform));
+        slotGO.transform.SetParent(contentContainer, false);
+
+        RectTransform rt = slotGO.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(80, 80);
+
+        Image bg = slotGO.AddComponent<Image>();
+        bg.color = new Color(1, 1, 1, 0.3f);
+
+        GameObject iconObj = new GameObject("Icon", typeof(RectTransform));
+        iconObj.transform.SetParent(slotGO.transform, false);
+        Image iconImg = iconObj.AddComponent<Image>();
+        iconImg.sprite = ingredient.icon;
+        iconImg.preserveAspect = true;
+        RectTransform iconRt = iconObj.GetComponent<RectTransform>();
+        iconRt.anchorMin = Vector2.zero;
+        iconRt.anchorMax = Vector2.one;
+        iconRt.sizeDelta = Vector2.zero;
+
+        GameObject checkObj = new GameObject("Checkmark", typeof(RectTransform));
+        checkObj.transform.SetParent(slotGO.transform, false);
+        Image checkImg = checkObj.AddComponent<Image>();
+        checkImg.color = Color.green;
+        RectTransform checkRt = checkObj.GetComponent<RectTransform>();
+        checkRt.anchorMin = new Vector2(0.7f, 0.7f);
+        checkRt.anchorMax = Vector2.one;
+        checkRt.sizeDelta = Vector2.zero;
+        checkObj.SetActive(false);
+
+        IngredientSlotUI slotUI = slotGO.AddComponent<IngredientSlotUI>();
+        SetPrivateField(slotUI, "iconImage", iconImg);
+        SetPrivateField(slotUI, "checkmarkObj", checkObj);
+
+        return slotGO;
+    }
+
+    private void SetPrivateField(object target, string fieldName, object value)
+    {
+        var field = target.GetType().GetField(fieldName,
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (field != null)
+            field.SetValue(target, value);
     }
 
     public void MarkIngredientComplete(int index, bool isComplete = true)

@@ -34,9 +34,34 @@ public class GameSceneSetup : MonoBehaviour
     {
         string sceneName = scene.name;
 
-        if (sceneName == "UI_PreppingArea" || sceneName == "UI_Cooking_Area" || sceneName == "UI_Mini_Market")
+        SetupCanvasResponsiveness();
+
+        if (IsPreppingScene(sceneName) || sceneName == "UI_Cooking_Area" || sceneName == "UI_Mini_Market")
         {
             CreateGameManagers(sceneName);
+        }
+    }
+
+    public static bool IsPreppingScene(string sceneName)
+    {
+        return sceneName == "UI_AdoboPreppingArea" ||
+               sceneName == "UI_SinigangPreppingArea" ||
+               sceneName == "UI_SisigPreppingArea" ||
+               sceneName == "UI_PreppingArea";
+    }
+
+    public static string GetDefaultPreppingScene()
+    {
+        return "UI_AdoboPreppingArea";
+    }
+
+    private void SetupCanvasResponsiveness()
+    {
+        if (FindObjectOfType<CanvasResponsiveSetup>() == null)
+        {
+            GameObject responsiveObj = new GameObject("CanvasResponsiveSetup");
+            responsiveObj.AddComponent<CanvasResponsiveSetup>();
+            Debug.Log("[GameSceneSetup] Created CanvasResponsiveSetup");
         }
     }
 
@@ -56,7 +81,7 @@ public class GameSceneSetup : MonoBehaviour
             Debug.Log("[GameSceneSetup] Created IngredientLookup");
         }
 
-        if (sceneName == "UI_PreppingArea")
+        if (IsPreppingScene(sceneName))
         {
             if (PreppingSync.Instance == null)
             {
@@ -65,9 +90,12 @@ public class GameSceneSetup : MonoBehaviour
                 Debug.Log("[GameSceneSetup] Created PreppingSync");
             }
 
-            GameObject navObj = new GameObject("PreppingAreaButtonSpawner");
-            navObj.AddComponent<PreppingAreaButtonSpawner>();
-            Debug.Log("[GameSceneSetup] Created PreppingAreaButtonSpawner");
+            if (GameObject.Find("PreppingAreaButtonSpawner") == null)
+            {
+                GameObject navObj = new GameObject("PreppingAreaButtonSpawner");
+                navObj.AddComponent<PreppingAreaButtonSpawner>();
+                Debug.Log("[GameSceneSetup] Created PreppingAreaButtonSpawner");
+            }
         }
 
         if (sceneName == "UI_Cooking_Area")

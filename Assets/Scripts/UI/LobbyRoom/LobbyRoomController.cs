@@ -83,8 +83,7 @@ public class LobbyRoomController : MonoBehaviour
                     {
                         UpdatePlayersCount(2, 2);
                         UpdateUIStatus("Connected to host! Waiting for game to start...", Color.green);
-                        SetPanel(waitingForPlayerPanel, false);
-                        SetPanel(playerJoinedPanel, true);
+                        SetPanels(playerJoinedPanel, waitingForPlayerPanel);
                     });
                 }
             }
@@ -110,8 +109,7 @@ public class LobbyRoomController : MonoBehaviour
         UnityMainThreadDispatcher.ExecuteOnMainThread(() =>
         {
             UpdateUIStatus("Connection lost! Reconnecting...", Color.red);
-            SetPanel(waitingForPlayerPanel, true);
-            SetPanel(playerJoinedPanel, false);
+            SetPanels(waitingForPlayerPanel, playerJoinedPanel);
         });
     }
 
@@ -175,8 +173,7 @@ public class LobbyRoomController : MonoBehaviour
         SetRoomCodeText(RoomData.RoomCode);
         UpdatePlayersCount(1, 2);
         UpdateUIStatus("Waiting for player to join...", Color.yellow);
-        SetPanel(waitingForPlayerPanel, true);
-        SetPanel(playerJoinedPanel, false);
+        SetPanels(waitingForPlayerPanel, playerJoinedPanel);
 
         if (startGameButton != null)
             startGameButton.interactable = false;
@@ -220,15 +217,13 @@ public class LobbyRoomController : MonoBehaviour
         {
             UpdatePlayersCount(2, 2);
             UpdateUIStatus("Connected to host! Waiting for game to start...", Color.green);
-            SetPanel(waitingForPlayerPanel, false);
-            SetPanel(playerJoinedPanel, true);
+            SetPanels(playerJoinedPanel, waitingForPlayerPanel);
         }
         else
         {
             UpdatePlayersCount(1, 2);
             UpdateUIStatus("Connecting to host...", Color.yellow);
-            SetPanel(waitingForPlayerPanel, true);
-            SetPanel(playerJoinedPanel, false);
+            SetPanels(waitingForPlayerPanel, playerJoinedPanel);
         }
 
         if (startGameButton != null)
@@ -254,8 +249,7 @@ public class LobbyRoomController : MonoBehaviour
             Debug.Log("[Lobby] Updating CLIENT UI - Connected!");
             UpdatePlayersCount(2, 2);
             UpdateUIStatus("Connected to host! Waiting for game to start...", Color.green);
-            SetPanel(waitingForPlayerPanel, false);
-            SetPanel(playerJoinedPanel, true);
+            SetPanels(playerJoinedPanel, waitingForPlayerPanel);
 
             if (ipPlaceHolder != null)
             {
@@ -331,8 +325,7 @@ public class LobbyRoomController : MonoBehaviour
                 // Update host UI
                 UpdatePlayersCount(2, 2);
                 UpdateUIStatus("Player connected! Ready to start.", Color.green);
-                SetPanel(waitingForPlayerPanel, false);
-                SetPanel(playerJoinedPanel, true);
+                SetPanels(playerJoinedPanel, waitingForPlayerPanel);
 
                 if (startGameButton != null)
                 {
@@ -362,8 +355,7 @@ public class LobbyRoomController : MonoBehaviour
             // Update host UI
             UpdatePlayersCount(1, 2);
             UpdateUIStatus("Waiting for player to join...", Color.yellow);
-            SetPanel(waitingForPlayerPanel, true);
-            SetPanel(playerJoinedPanel, false);
+            SetPanels(waitingForPlayerPanel, playerJoinedPanel);
 
             if (startGameButton != null)
                 startGameButton.interactable = false;
@@ -477,6 +469,12 @@ public class LobbyRoomController : MonoBehaviour
             panel.SetActive(active);
             Debug.Log($"[Lobby] Panel {panel.name} set to: {active}");
         }
+    }
+
+    private void SetPanels(GameObject show, GameObject hide)
+    {
+        if (show != null) show.SetActive(true);
+        if (hide != null && hide != show) hide.SetActive(false);
     }
 
     private void OnDestroy()

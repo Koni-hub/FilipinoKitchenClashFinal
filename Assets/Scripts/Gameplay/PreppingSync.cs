@@ -253,7 +253,7 @@ public class PreppingSync : MonoBehaviour
             return;
         }
 
-        GameObject imgObj = new GameObject($"Remote_{ingredientType}_{id}");
+        GameObject imgObj = new GameObject($"Remote_{ingredientType}_{id}", typeof(RectTransform));
         imgObj.transform.SetParent(spawnParent, false);
 
         Image img = imgObj.AddComponent<Image>();

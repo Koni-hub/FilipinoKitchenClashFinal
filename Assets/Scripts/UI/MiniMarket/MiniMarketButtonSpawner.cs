@@ -11,13 +11,13 @@ public class MiniMarketButtonSpawner : MonoBehaviour
 
         CreateButton(canvas, "GoToPreppingButton", "Go to Prepping",
             new Vector2(130, 0), new Vector2(0, 0.5f), new Color(0.2f, 0.6f, 0.3f, 1f),
-            "UI_PreppingArea");
+            "UI_AdoboPreppingArea");
     }
 
     private void CreateButton(Canvas canvas, string name, string label,
         Vector2 position, Vector2 anchor, Color color, string sceneName)
     {
-        GameObject btnObj = new GameObject(name);
+        GameObject btnObj = new GameObject(name, typeof(RectTransform));
         btnObj.transform.SetParent(canvas.transform, false);
 
         Image bg = btnObj.AddComponent<Image>();
@@ -33,7 +33,7 @@ public class MiniMarketButtonSpawner : MonoBehaviour
         rt.anchoredPosition = position;
         rt.sizeDelta = new Vector2(200, 50);
 
-        GameObject textObj = new GameObject("Text");
+        GameObject textObj = new GameObject("Text", typeof(RectTransform));
         textObj.transform.SetParent(btnObj.transform, false);
 
         Text uiText = textObj.AddComponent<Text>();

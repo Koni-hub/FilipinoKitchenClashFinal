@@ -71,15 +71,16 @@ public class DragNDrop : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDra
 
         if(!choppingBoardFunction.isOccupied)
         {
-            if (transform.tag != "PorkKawaliMinced" && transform.tag != "LaurelLeavesCut" && 
-                transform.tag != "GarlicMinced" && transform.tag != "OnionMinced" &&  
-                transform.tag != "TomatoWedges" &&  
-                transform.tag != "LaurelLeaves" || spawnPositionCopy == chopBoardPosition)
+            bool isFinishedTag = transform.tag == "PorkKawaliMinced" || transform.tag == "LaurelLeavesCut" ||
+                transform.tag == "GarlicMinced" || transform.tag == "OnionMinced" ||
+                transform.tag == "TomatoWedges";
+
+            if (!isFinishedTag || spawnPositionCopy == chopBoardPosition)
             {
                 choppingBoardFunction.selectedShader.SetActive(true);
             }
 
-            if (transform.tag == "WashedLaurelLeaves")
+            if (transform.tag == "WashedLaurelLeaves" || transform.tag == "WashedPork")
                 choppingBoardFunction.selectedShader.SetActive(true);
         }    
         
